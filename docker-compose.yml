@@ -6,7 +6,11 @@ services:
     container_name: consaude-app
     labels:
       - traefik.enable=true
+      - traefik.docker.network=traefik-net
       - traefik.http.routers.consaude.rule=Host(`consaude.kyriosai.me`)
+      - traefik.http.routers.consaude.entrypoints=websecure
+      - traefik.http.routers.consaude.tls=true
+      - traefik.http.routers.consaude.tls.certresolver=letsencrypt
       - traefik.http.services.consaude.loadbalancer.server.port=3000
     restart: unless-stopped
     networks:
