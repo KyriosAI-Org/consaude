@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    container_name: consaude-app
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.consaude.rule=Host(`consaude.kyriosai.me`)
+      - traefik.http.services.consaude.loadbalancer.server.port=3000
+    restart: unless-stopped
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true

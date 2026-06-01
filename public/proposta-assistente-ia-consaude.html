@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assistente IA ConSaúde — Proposta Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green-900:#0a3d2e;
+  --green-800:#0d5740;
+  --green-700:#117a5a;
+  --green-600:#17a376;
+  --green-500:#1ec99a;
+  --green-400:#4de0b8;
+  --green-300:#8aecd4;
+  --green-200:#c0f5e8;
+  --green-100:#e8fbf5;
+  --green-50:#f4fdf9;
+  --slate-900:#0f172a;
+  --slate-800:#1e293b;
+  --slate-700:#334155;
+  --slate-600:#475569;
+  --slate-500:#64748b;
+  --slate-400:#94a3b8;
+  --slate-300:#cbd5e1;
+  --slate-200:#e2e8f0;
+  --slate-100:#f1f5f9;
+  --slate-50:#f8fafc;
+  --white:#ffffff;
+  --amber-500:#f59e0b;
+  --red-400:#f87171;
+  --red-500:#ef4444;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--slate-800);background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ===== UTILITIES ===== */
+.serif{font-family:'Instrument Serif',serif}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+.section{padding:7rem 0}
+.section-label{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--green-700);margin-bottom:1.25rem;
+}
+.section-label::before{content:'';width:2rem;height:2px;background:var(--green-500);border-radius:1px}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.15;color:var(--slate-900);margin-bottom:1rem}
+.section-subtitle{font-size:1.125rem;color:var(--slate-500);line-height:1.7;max-width:640px}
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1.25rem 2rem;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,0,0,.04);
+  display:flex;align-items:center;justify-content:space-between;
+  transition:box-shadow .3s;
+}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.06)}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.1rem;color:var(--green-800);text-decoration:none}
+.nav-logo .dot{width:10px;height:10px;border-radius:50%;background:var(--green-500);display:inline-block}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{text-decoration:none;font-size:.85rem;font-weight:600;color:var(--slate-500);transition:color .2s}
+.nav-links a:hover{color:var(--green-700)}
+.nav-cta{
+  background:var(--green-700);color:var(--white);border:none;padding:.65rem 1.5rem;border-radius:100px;
+  font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;
+}
+.nav-cta:hover{background:var(--green-800);transform:translateY(-1px)}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  background:linear-gradient(160deg,var(--green-50) 0%,var(--white) 40%,var(--green-100) 100%);
+  position:relative;overflow:hidden;padding-top:5rem;
+}
+.hero::before{
+  content:'';position:absolute;top:-30%;right:-20%;width:800px;height:800px;
+  background:radial-gradient(circle,rgba(30,201,154,.08) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-10%;left:-10%;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(17,122,90,.05) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.hero .container{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:1}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--green-100);border:1px solid var(--green-200);
+  padding:.4rem 1rem;border-radius:100px;font-size:.75rem;font-weight:700;
+  color:var(--green-700);margin-bottom:1.5rem;
+  animation:fadeInDown .8s ease both;
+}
+.hero-badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--green-500);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+
+.hero h1{
+  font-size:clamp(2.5rem,5vw,3.75rem);font-weight:800;line-height:1.1;
+  color:var(--slate-900);margin-bottom:1.25rem;
+  animation:fadeInUp .8s ease .2s both;
+}
+.hero h1 .highlight{
+  background:linear-gradient(135deg,var(--green-600),var(--green-500));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-desc{font-size:1.125rem;color:var(--slate-500);line-height:1.8;margin-bottom:2rem;max-width:520px;animation:fadeInUp .8s ease .4s both}
+.hero-stats{display:flex;gap:2.5rem;animation:fadeInUp .8s ease .6s both}
+.hero-stat{text-align:left}
+.hero-stat .num{font-size:2rem;font-weight:800;color:var(--green-700)}
+.hero-stat .lab{font-size:.8rem;color:var(--slate-400);font-weight:500;margin-top:.15rem}
+
+.hero-visual{animation:fadeInRight 1s ease .3s both}
+.hero-phone{
+  width:320px;margin:0 auto;background:var(--slate-900);border-radius:2.5rem;
+  padding:1rem;box-shadow:0 40px 80px rgba(0,0,0,.15),0 0 0 1px rgba(255,255,255,.08) inset;
+  position:relative;
+}
+.hero-phone::before{
+  content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  width:80px;height:24px;background:var(--slate-900);border-radius:0 0 12px 12px;z-index:10;
+}
+.phone-screen{
+  background:var(--white);border-radius:1.75rem;overflow:hidden;min-height:540px;
+  display:flex;flex-direction:column;
+}
+.phone-header{
+  background:var(--green-700);color:var(--white);padding:2.5rem 1.25rem 1rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.phone-avatar{width:40px;height:40px;border-radius:50%;background:var(--green-400);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:var(--green-900)}
+.phone-name{font-weight:700;font-size:.9rem}
+.phone-status{font-size:.7rem;opacity:.7;margin-top:1px}
+.phone-chat{flex:1;padding:1rem;display:flex;flex-direction:column;gap:.6rem;background:var(--green-50)}
+.chat-bubble{
+  max-width:85%;padding:.7rem 1rem;border-radius:1rem;font-size:.8rem;line-height:1.5;
+  animation:fadeInUp .5s ease both;
+}
+.chat-bubble.bot{background:var(--white);border:1px solid var(--green-100);border-bottom-left-radius:4px;align-self:flex-start}
+.chat-bubble.user{background:var(--green-600);color:var(--white);border-bottom-right-radius:4px;align-self:flex-end}
+.chat-bubble:nth-child(1){animation-delay:.8s}
+.chat-bubble:nth-child(2){animation-delay:1.6s}
+.chat-bubble:nth-child(3){animation-delay:2.4s}
+.chat-bubble:nth-child(4){animation-delay:3.2s}
+.chat-typing{display:flex;gap:4px;padding:.7rem 1rem;align-self:flex-start;animation:fadeInUp .5s ease 3.8s both}
+.chat-typing span{width:6px;height:6px;border-radius:50%;background:var(--slate-300);animation:typing 1.4s infinite}
+.chat-typing span:nth-child(2){animation-delay:.2s}
+.chat-typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+/* ===== PROBLEM ===== */
+.problem{background:var(--slate-900);color:var(--white);position:relative;overflow:hidden}
+.problem::before{
+  content:'';position:absolute;top:0;right:0;width:50%;height:100%;
+  background:linear-gradient(135deg,rgba(17,122,90,.08),transparent);pointer-events:none;
+}
+.problem .section-label{color:var(--green-400)}
+.problem .section-label::before{background:var(--green-400)}
+.problem .section-title{color:var(--white)}
+.problem .section-subtitle{color:var(--slate-400)}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.problem-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  border-radius:1.25rem;padding:2rem;transition:all .3s;position:relative;overflow:hidden;
+}
+.problem-card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.1);transform:translateY(-4px)}
+.problem-icon{
+  width:3rem;height:3rem;border-radius:1rem;margin-bottom:1.25rem;
+  display:flex;align-items:center;justify-content:center;font-size:1.25rem;
+}
+.problem-icon.red{background:rgba(248,113,113,.12);color:var(--red-400)}
+.problem-icon.amber{background:rgba(245,158,11,.12);color:var(--amber-500)}
+.problem-card h3{font-size:1.05rem;font-weight:700;margin-bottom:.5rem;color:var(--white)}
+.problem-card p{font-size:.875rem;color:var(--slate-400);line-height:1.7}
+
+/* ===== COMPARISON ===== */
+.comparison{background:var(--slate-50)}
+.comparison-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:2rem;margin-top:3rem;align-items:start}
+.comparison-col{border-radius:1.5rem;padding:2.5rem;min-height:500px}
+.comparison-col.before{background:var(--white);border:1px solid var(--slate-200)}
+.comparison-col.after{background:linear-gradient(160deg,var(--green-700),var(--green-900));color:var(--white)}
+.comparison-col h3{font-size:1.25rem;font-weight:800;margin-bottom:2rem;display:flex;align-items:center;gap:.6rem}
+.comparison-col h3 .tag{
+  font-size:.65rem;font-weight:700;padding:.25rem .7rem;border-radius:100px;text-transform:uppercase;letter-spacing:.05em;
+}
+.before h3 .tag{background:var(--red-400);color:var(--white)}
+.after h3 .tag{background:var(--green-400);color:var(--green-900)}
+.comparison-item{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1.25rem;font-size:.9rem;line-height:1.6}
+.comparison-item .icon{flex-shrink:0;margin-top:3px;font-size:.9rem}
+.before .comparison-item .icon{color:var(--red-500)}
+.after .comparison-item .icon{color:var(--green-300)}
+.before .comparison-item{color:var(--slate-600)}
+.after .comparison-item{color:var(--green-100)}
+.comparison-arrow{
+  align-self:center;width:60px;height:60px;border-radius:50%;
+  background:var(--green-500);display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;color:var(--white);box-shadow:0 8px 24px rgba(30,201,154,.3);
+}
+
+/* ===== HOW IT WORKS ===== */
+.how{background:var(--white)}
+.how-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:3rem}
+.how-step{text-align:center;position:relative}
+.how-step::after{
+  content:'';position:absolute;top:2rem;right:-50%;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--green-500),var(--green-200));
+}
+.how-step:last-child::after{display:none}
+.how-num{
+  width:4rem;height:4rem;border-radius:50%;
+  background:linear-gradient(135deg,var(--green-600),var(--green-700));
+  color:var(--white);font-weight:800;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;position:relative;z-index:1;
+  box-shadow:0 4px 16px rgba(17,122,90,.25);
+}
+.how-step h4{font-size:.9rem;font-weight:700;margin-bottom:.35rem;color:var(--slate-900)}
+.how-step p{font-size:.8rem;color:var(--slate-500);line-height:1.5}
+
+/* ===== FEATURES ===== */
+.features{background:var(--green-50);position:relative;overflow:hidden}
+.features::before{
+  content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(30,201,154,.06),transparent 70%);
+  border-radius:50%;
+}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:3rem}
+.feature-card{
+  background:var(--white);border:1px solid var(--green-100);border-radius:1.25rem;
+  padding:1.75rem;transition:all .3s;cursor:default;
+}
+.feature-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(17,122,90,.08);border-color:var(--green-300)}
+.feature-emoji{font-size:1.75rem;margin-bottom:1rem}
+.feature-card h4{font-size:.95rem;font-weight:700;color:var(--slate-900);margin-bottom:.4rem}
+.feature-card p{font-size:.82rem;color:var(--slate-500);line-height:1.6}
+
+/* ===== CONVERSATION DEMO ===== */
+.demo{background:var(--white)}
+.demo-container{
+  max-width:480px;margin:3rem auto 0;
+  background:var(--slate-50);border-radius:2rem;overflow:hidden;
+  border:1px solid var(--slate-200);box-shadow:0 20px 60px rgba(0,0,0,.06);
+}
+.demo-topbar{
+  background:var(--green-700);color:var(--white);padding:1rem 1.5rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.demo-topbar .avatar{width:36px;height:36px;border-radius:50%;background:var(--green-400);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;color:var(--green-900)}
+.demo-topbar .info .name{font-weight:700;font-size:.9rem}
+.demo-topbar .info .status{font-size:.7rem;opacity:.7}
+.demo-messages{padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e2e8f0' fill-opacity='.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") var(--green-50)}
+.demo-msg{max-width:82%;padding:.65rem 1rem;border-radius:1rem;font-size:.82rem;line-height:1.55}
+.demo-msg.bot{background:var(--white);border:1px solid var(--green-100);align-self:flex-start;border-bottom-left-radius:4px}
+.demo-msg.user{background:var(--green-600);color:var(--white);align-self:flex-end;border-bottom-right-radius:4px}
+.demo-msg .time{font-size:.65rem;opacity:.5;margin-top:4px;text-align:right}
+
+/* ===== BENEFITS ===== */
+.benefits{background:var(--slate-900);color:var(--white);position:relative;overflow:hidden}
+.benefits::after{
+  content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(30,201,154,.1),transparent 70%);
+  border-radius:50%;
+}
+.benefits .section-label{color:var(--green-400)}
+.benefits .section-label::before{background:var(--green-400)}
+.benefits .section-title{color:var(--white)}
+.benefits-tabs{display:flex;gap:.5rem;margin:2rem 0;flex-wrap:wrap}
+.benefits-tab{
+  padding:.6rem 1.5rem;border-radius:100px;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,255,.1);
+  color:var(--slate-400);background:transparent;
+}
+.benefits-tab.active{background:var(--green-600);color:var(--white);border-color:var(--green-600)}
+.benefits-tab:hover:not(.active){border-color:rgba(255,255,255,.2);color:var(--slate-300)}
+.benefits-content{display:none}
+.benefits-content.active{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
+.benefit-item{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  border-radius:1rem;padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;
+  transition:all .3s;
+}
+.benefit-item:hover{background:rgba(255,255,255,.07)}
+.benefit-item .icon{font-size:1.3rem;flex-shrink:0;margin-top:2px}
+.benefit-item h4{font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:.25rem}
+.benefit-item p{font-size:.82rem;color:var(--slate-400);line-height:1.6}
+
+/* ===== METRICS ===== */
+.metrics{background:linear-gradient(160deg,var(--green-700),var(--green-900));color:var(--white);text-align:center}
+.metrics .section-label{color:var(--green-300)}
+.metrics .section-label::before{background:var(--green-300)}
+.metrics .section-title{color:var(--white)}
+.metrics .section-subtitle{color:var(--green-200);margin:0 auto}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem}
+.metric-card{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  border-radius:1.25rem;padding:2rem 1.5rem;backdrop-filter:blur(10px);
+  transition:all .3s;
+}
+.metric-card:hover{background:rgba(255,255,255,.12);transform:translateY(-4px)}
+.metric-card .num{font-size:2.75rem;font-weight:800;line-height:1;margin-bottom:.5rem;background:linear-gradient(135deg,var(--green-300),var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.metric-card .label{font-size:.85rem;color:var(--green-200);line-height:1.4}
+
+/* ===== INTEGRATION ===== */
+.integration{background:var(--white)}
+.integration-visual{
+  display:flex;align-items:center;justify-content:center;gap:2rem;
+  margin-top:3rem;flex-wrap:wrap;
+}
+.integration-node{
+  background:var(--white);border:2px solid var(--green-200);border-radius:1.25rem;
+  padding:1.5rem 2rem;text-align:center;transition:all .3s;
+  box-shadow:0 4px 16px rgba(0,0,0,.04);
+}
+.integration-node:hover{border-color:var(--green-400);transform:scale(1.03)}
+.integration-node .emoji{font-size:2rem;margin-bottom:.5rem}
+.integration-node .name{font-weight:700;font-size:.85rem;color:var(--slate-800)}
+.integration-node .desc{font-size:.75rem;color:var(--slate-400);margin-top:.2rem}
+.integration-arrow{font-size:1.5rem;color:var(--green-500)}
+.integration-center{
+  background:linear-gradient(135deg,var(--green-600),var(--green-800));
+  border:none;color:var(--white);box-shadow:0 8px 32px rgba(17,122,90,.3);
+  transform:scale(1.15);
+}
+.integration-center:hover{transform:scale(1.18)}
+.integration-center .name{color:var(--white)}
+.integration-center .desc{color:var(--green-200)}
+
+/* ===== PRICING ===== */
+.pricing{background:var(--slate-50)}
+.pricing-card{
+  max-width:560px;margin:3rem auto 0;
+  background:var(--white);border-radius:2rem;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.06);border:1px solid var(--slate-200);
+  position:relative;
+}
+.pricing-header{
+  background:linear-gradient(135deg,var(--green-700),var(--green-900));
+  padding:2.5rem;text-align:center;color:var(--white);position:relative;overflow:hidden;
+}
+.pricing-header::before{
+  content:'';position:absolute;top:-50%;right:-30%;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(255,255,255,.06),transparent 70%);border-radius:50%;
+}
+.pricing-header h3{font-size:1.5rem;font-weight:800;margin-bottom:.5rem}
+.pricing-header p{font-size:.9rem;opacity:.7}
+.pricing-body{padding:2.5rem}
+.pricing-row{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 0;border-bottom:1px solid var(--slate-100)}
+.pricing-row:last-child{border-bottom:none}
+.pricing-row .label{font-size:.95rem;color:var(--slate-600)}
+.pricing-row .label small{display:block;font-size:.75rem;color:var(--slate-400);margin-top:.15rem}
+.pricing-row .value{font-size:1.5rem;font-weight:800;color:var(--green-700)}
+.pricing-row .value small{font-size:.8rem;font-weight:500;color:var(--slate-400)}
+.pricing-footer{padding:0 2.5rem 2.5rem;text-align:center}
+.pricing-cta{
+  display:inline-block;width:100%;padding:1rem;border-radius:1rem;
+  background:linear-gradient(135deg,var(--green-600),var(--green-700));
+  color:var(--white);font-weight:700;font-size:1rem;border:none;cursor:pointer;
+  transition:all .3s;text-decoration:none;
+  box-shadow:0 4px 16px rgba(17,122,90,.2);
+}
+.pricing-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(17,122,90,.3)}
+.pricing-note{font-size:.75rem;color:var(--slate-400);margin-top:1rem;line-height:1.5}
+
+/* ===== ROI ===== */
+.roi{background:var(--white)}
+.roi-table{
+  margin-top:3rem;border-radius:1.25rem;overflow:hidden;
+  border:1px solid var(--slate-200);
+}
+.roi-table table{width:100%;border-collapse:collapse}
+.roi-table th{
+  background:var(--green-700);color:var(--white);padding:1rem 1.5rem;
+  font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700;text-align:left;
+}
+.roi-table td{padding:1rem 1.5rem;font-size:.9rem;color:var(--slate-700);border-bottom:1px solid var(--slate-100)}
+.roi-table tr:last-child td{border-bottom:none}
+.roi-table tr:hover td{background:var(--green-50)}
+.roi-table .highlight-val{color:var(--green-700);font-weight:700}
+
+/* ===== CTA FINAL ===== */
+.cta-final{
+  background:linear-gradient(160deg,var(--green-800),var(--slate-900));
+  color:var(--white);text-align:center;padding:6rem 2rem;position:relative;overflow:hidden;
+}
+.cta-final::before{
+  content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:800px;
+  background:radial-gradient(circle,rgba(30,201,154,.1),transparent 60%);
+  border-radius:50%;
+}
+.cta-final h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:1rem;position:relative;z-index:1}
+.cta-final p{font-size:1.1rem;color:var(--green-200);max-width:600px;margin:0 auto 2.5rem;line-height:1.7;position:relative;z-index:1}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--green-500);color:var(--green-900);
+  padding:1rem 2.5rem;border-radius:100px;font-weight:800;font-size:1rem;
+  text-decoration:none;transition:all .3s;position:relative;z-index:1;
+  box-shadow:0 4px 24px rgba(30,201,154,.3);
+}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(30,201,154,.4)}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--slate-900);color:var(--slate-400);padding:3rem 2rem;text-align:center}
+.footer-brand{font-weight:800;color:var(--white);font-size:1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.footer-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--green-500)}
+.footer p{font-size:.8rem;line-height:1.6}
+.footer .divider{width:3rem;height:2px;background:var(--green-700);margin:1rem auto;border-radius:1px}
+.footer-by{font-size:.7rem;color:var(--slate-600);margin-top:.5rem}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){
+  .hero .container{grid-template-columns:1fr;text-align:center}
+  .hero-desc{margin:0 auto 2rem}
+  .hero-stats{justify-content:center}
+  .hero-visual{order:-1}
+  .hero-phone{width:280px}
+  .problem-grid{grid-template-columns:1fr}
+  .comparison-grid{grid-template-columns:1fr;gap:1rem}
+  .comparison-arrow{justify-self:center;transform:rotate(90deg)}
+  .how-flow{grid-template-columns:repeat(3,1fr)}
+  .how-step::after{display:none}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .benefits-content.active{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .integration-visual{gap:1rem}
+  .integration-arrow{display:none}
+}
+@media(max-width:640px){
+  .section{padding:4rem 0}
+  .container{padding:0 1.25rem}
+  .hero-phone{width:260px}
+  .how-flow{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .metrics-grid{grid-template-columns:1fr}
+  .hero-stats{flex-direction:column;gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo"><span class="dot"></span> Assistente IA ConSaúde</a>
+  <ul class="nav-links">
+    <li><a href="#problema">Problema</a></li>
+    <li><a href="#solucao">Solução</a></li>
+    <li><a href="#funcionalidades">Funcionalidades</a></li>
+    <li><a href="#beneficios">Benefícios</a></li>
+    <li><a href="#investimento">Investimento</a></li>
+  </ul>
+  <a href="#investimento" class="nav-cta">Ver Plano →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <div class="hero-badge"><span class="pulse"></span> Proposta Exclusiva — Clínica ConSaúde</div>
+      <h1>O atendimento da<br>ConSaúde, agora com<br><span class="highlight">Inteligência Artificial</span></h1>
+      <p class="hero-desc">Uma assistente virtual integrada ao sistema da clínica que identifica pacientes, consulta históricos e agenda consultas — tudo via WhatsApp, 24 horas por dia.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">~90%</div><div class="lab">Redução do tempo<br>operacional</div></div>
+        <div class="hero-stat"><div class="num">&lt;30s</div><div class="lab">Tempo médio<br>de resposta</div></div>
+        <div class="hero-stat"><div class="num">24/7</div><div class="lab">Atendimento<br>ininterrupto</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-phone">
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div class="phone-avatar">CS</div>
+            <div><div class="phone-name">Assistente ConSaúde</div><div class="phone-status">● Online agora</div></div>
+          </div>
+          <div class="phone-chat">
+            <div class="chat-bubble bot">Olá, Adria! Tudo bem? 😊 Vi aqui que você já se consultou com o <strong>Dr. Tarcísio</strong> e com a <strong>Dra. Tatiana</strong> na área de ginecologia.</div>
+            <div class="chat-bubble bot">Gostaria de agendar um retorno com algum deles ou está buscando outra especialidade?</div>
+            <div class="chat-bubble user">Quero retorno com a Dra. Tatiana!</div>
+            <div class="chat-bubble bot">Perfeito! 📅 A Dra. Tatiana tem horários na <strong>segunda 09/06</strong> às 14h e 15h30, e na <strong>quarta 11/06</strong> às 9h. Qual prefere?</div>
+            <div class="chat-typing"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem section" id="problema">
+  <div class="container">
+    <div class="section-label">O Desafio Atual</div>
+    <h2 class="section-title">O que acontece hoje na<br>recepção da ConSaúde</h2>
+    <p class="section-subtitle">Mesmo com um chatbot no WhatsApp, o atendimento atual cria fricção, demora e frustração — tanto para pacientes quanto para a equipe.</p>
+    <div class="problem-grid">
+      <div class="problem-card fade-up">
+        <div class="problem-icon red">🔄</div>
+        <h3>Informação repetida</h3>
+        <p>O paciente informa seus dados ao chatbot e, ao ser transferido para a atendente, precisa repetir tudo. Isso gera irritação e sensação de descaso.</p>
+      </div>
+      <div class="problem-card fade-up">
+        <div class="problem-icon red">⏳</div>
+        <h3>Tempo de espera</h3>
+        <p>A atendente precisa buscar manualmente o cadastro, verificar convênios, checar agenda do médico. São 5 a 15 minutos por atendimento.</p>
+      </div>
+      <div class="problem-card fade-up">
+        <div class="problem-icon amber">📵</div>
+        <h3>Fora do horário? Sem atendimento</h3>
+        <p>Depois das 18h e nos finais de semana, o paciente não tem como agendar, cancelar ou reagendar. As mensagens se acumulam para segunda-feira.</p>
+      </div>
+      <div class="problem-card fade-up">
+        <div class="problem-icon red">🧑‍💻</div>
+        <h3>Recepção sobrecarregada</h3>
+        <p>Atendentes dividem atenção entre WhatsApp, telefone e pacientes presenciais. A qualidade do atendimento cai quando a demanda sobe.</p>
+      </div>
+      <div class="problem-card fade-up">
+        <div class="problem-icon amber">❌</div>
+        <h3>Sem contexto do paciente</h3>
+        <p>O chatbot atual não sabe quem é o paciente, qual médico ele já consultou, ou qual convênio utiliza. Cada conversa começa do zero.</p>
+      </div>
+      <div class="problem-card fade-up">
+        <div class="problem-icon red">📉</div>
+        <h3>Perda de agendamentos</h3>
+        <p>Pacientes que desistem na fila de espera ou que não conseguem contato fora do horário comercial representam receita perdida diariamente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comparison section" id="solucao">
+  <div class="container">
+    <div class="section-label">Antes × Depois</div>
+    <h2 class="section-title">A transformação no atendimento</h2>
+    <p class="section-subtitle">Veja como a experiência muda para cada paciente que entra em contato com a ConSaúde.</p>
+    <div class="comparison-grid">
+      <div class="comparison-col before">
+        <h3><span class="tag">Hoje</span> Processo Atual</h3>
+        <div class="comparison-item"><span class="icon">✗</span><span>Paciente envia mensagem no WhatsApp</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>Chatbot genérico faz perguntas básicas</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>Paciente espera transferência para atendente</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>Atendente pede as mesmas informações novamente</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>Busca manual no sistema por cadastro e agenda</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>5 a 15 minutos por agendamento</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>Sem atendimento fora do horário comercial</span></div>
+        <div class="comparison-item"><span class="icon">✗</span><span>Paciente frustrado com a experiência</span></div>
+      </div>
+      <div class="comparison-arrow">→</div>
+      <div class="comparison-col after">
+        <h3><span class="tag">Com IA</span> Novo Processo</h3>
+        <div class="comparison-item"><span class="icon">✓</span><span>Paciente envia mensagem no WhatsApp</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>IA identifica o paciente pelo número</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>Recupera histórico de médicos e convênios</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>Personaliza a conversa com contexto real</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>Consulta e sugere datas e horários ao vivo</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>Agendamento em menos de 30 segundos</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>Atendimento 24 horas, 7 dias por semana</span></div>
+        <div class="comparison-item"><span class="icon">✓</span><span>Paciente encantado com a experiência</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how section">
+  <div class="container">
+    <div class="section-label">Como Funciona</div>
+    <h2 class="section-title">Fluxo inteligente em 5 passos</h2>
+    <p class="section-subtitle">Da mensagem do paciente ao agendamento confirmado — sem intervenção humana.</p>
+    <div class="how-flow">
+      <div class="how-step fade-up">
+        <div class="how-num">1</div>
+        <h4>Recebe a mensagem</h4>
+        <p>O paciente envia uma mensagem no WhatsApp da clínica.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="how-num">2</div>
+        <h4>Identifica o paciente</h4>
+        <p>A IA consulta o sistema e identifica o paciente pelo número ou CPF.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="how-num">3</div>
+        <h4>Recupera contexto</h4>
+        <p>Busca histórico de médicos, convênios e consultas anteriores.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="how-num">4</div>
+        <h4>Conversa inteligente</h4>
+        <p>Sugere retornos, busca horários e responde dúvidas com contexto.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="how-num">5</div>
+        <h4>Agendamento confirmado</h4>
+        <p>Registra no sistema da clínica. Paciente recebe a confirmação.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONVERSATION DEMO -->
+<section class="demo section">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label" style="justify-content:center">Demonstração Real</div>
+      <h2 class="section-title">Veja uma conversa real<br>com a Assistente IA</h2>
+      <p class="section-subtitle" style="margin:0 auto">Exemplo de como a IA atende um paciente não identificado, valida o CPF e conclui o agendamento.</p>
+    </div>
+    <div class="demo-container">
+      <div class="demo-topbar">
+        <div class="avatar">CS</div>
+        <div class="info"><div class="name">Assistente ConSaúde</div><div class="status">● Online</div></div>
+      </div>
+      <div class="demo-messages">
+        <div class="demo-msg bot">Olá! Bem-vindo(a) à <strong>Clínica ConSaúde</strong>! 😊 Como posso te ajudar?<div class="time">10:02</div></div>
+        <div class="demo-msg user">Quero marcar uma consulta com cardiologista<div class="time">10:02</div></div>
+        <div class="demo-msg bot">Claro! Para iniciar, preciso verificar seu cadastro. Você já é paciente da ConSaúde?<div class="time">10:02</div></div>
+        <div class="demo-msg user">Sim, sou sim<div class="time">10:03</div></div>
+        <div class="demo-msg bot">Ótimo! Pode me informar seu CPF para eu localizar seu cadastro?<div class="time">10:03</div></div>
+        <div class="demo-msg user">123.456.789-00<div class="time">10:03</div></div>
+        <div class="demo-msg bot">Encontrei! Olá, <strong>Carlos</strong>! 😊 Vi que seu convênio é <strong>Hapvida</strong>. Para cardiologia, temos o <strong>Dr. Marcos Ribeiro</strong> disponível na <strong>terça 10/06</strong> às 8h30 e na <strong>quinta 12/06</strong> às 14h. Qual horário fica melhor?<div class="time">10:03</div></div>
+        <div class="demo-msg user">Terça às 8h30 🙏<div class="time">10:04</div></div>
+        <div class="demo-msg bot">Prontinho, Carlos! ✅ Consulta agendada:<br><br>🩺 <strong>Dr. Marcos Ribeiro</strong> — Cardiologia<br>📅 Terça, 10/06 às 8h30<br>📍 Tv. Rui Barbosa, 1180 — Nazaré<br><br>Lembre-se de trazer documento e carteirinha do convênio. Até lá! 💚<div class="time">10:04</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features section" id="funcionalidades">
+  <div class="container">
+    <div class="section-label">Funcionalidades</div>
+    <h2 class="section-title">Tudo que a Assistente IA faz</h2>
+    <p class="section-subtitle">Cada funcionalidade conectada diretamente ao sistema da clínica, sem digitação manual.</p>
+    <div class="features-grid">
+      <div class="feature-card fade-up"><div class="feature-emoji">🔍</div><h4>Identificação automática</h4><p>Reconhece o paciente pelo número do WhatsApp e busca o cadastro no sistema.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">📋</div><h4>Histórico médico</h4><p>Consulta quais médicos o paciente já visitou e sugere retorno contextualizado.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">📝</div><h4>Cadastro de pacientes</h4><p>Se o paciente é novo, coleta os dados e cria o cadastro automaticamente no sistema.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">✏️</div><h4>Atualização cadastral</h4><p>Telefone, endereço ou convênio mudaram? O paciente informa e a IA atualiza.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">🏥</div><h4>Convênios</h4><p>Informa quais convênios são aceitos e verifica cobertura para o médico escolhido.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">👨‍⚕️</div><h4>Médicos e especialidades</h4><p>Lista especialidades disponíveis e médicos ativos em cada uma.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">📅</div><h4>Datas e horários</h4><p>Consulta a agenda real do médico e apresenta slots disponíveis ao paciente.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">✅</div><h4>Agendamento direto</h4><p>Cria o atendimento no sistema com todos os dados preenchidos automaticamente.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">📄</div><h4>Consultar agendamentos</h4><p>O paciente pergunta e a IA mostra todas as consultas futuras agendadas.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">❌</div><h4>Cancelamento</h4><p>Cancela consultas sem ligar para a clínica. Rápido, direto e registrado.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">🔄</div><h4>Reagendamento</h4><p>Remarca para outra data ou horário com um fluxo guiado pela IA.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">📍</div><h4>Unidades e informações</h4><p>Endereço, telefone, horário de funcionamento e modalidades de atendimento.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">🧑‍💼</div><h4>Transferência humana</h4><p>Quando necessário, transfere para atendente humana com todo o contexto da conversa.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">🕐</div><h4>Atendimento 24/7</h4><p>Funciona 24 horas, 7 dias por semana. Inclusive feriados e madrugadas.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">🎂</div><h4>Parabéns automático</h4><p>Envia mensagens de aniversário personalizadas para fortalecer o vínculo com pacientes.</p></div>
+      <div class="feature-card fade-up"><div class="feature-emoji">📊</div><h4>Confirmação de presença</h4><p>Atualiza o status do atendimento automaticamente quando o paciente confirma.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits section" id="beneficios">
+  <div class="container">
+    <div class="section-label">Benefícios</div>
+    <h2 class="section-title">Quem ganha com a IA?</h2>
+    <div class="benefits-tabs">
+      <button class="benefits-tab active" data-tab="pacientes">👤 Pacientes</button>
+      <button class="benefits-tab" data-tab="recepcionistas">🧑‍💻 Recepcionistas</button>
+      <button class="benefits-tab" data-tab="gestores">📊 Gestores</button>
+    </div>
+    <div class="benefits-content active" id="tab-pacientes">
+      <div class="benefit-item"><div class="icon">⚡</div><div><h4>Atendimento instantâneo</h4><p>Sem fila, sem espera. A resposta chega em menos de 30 segundos, a qualquer hora do dia.</p></div></div>
+      <div class="benefit-item"><div class="icon">🧠</div><div><h4>Contexto personalizado</h4><p>A IA sabe quem é o paciente, seus médicos e seu convênio. Ninguém precisa repetir informação.</p></div></div>
+      <div class="benefit-item"><div class="icon">📱</div><div><h4>Tudo pelo WhatsApp</h4><p>Agendar, cancelar, reagendar, tirar dúvidas. Sem precisar ligar ou instalar outro app.</p></div></div>
+      <div class="benefit-item"><div class="icon">🌙</div><div><h4>Disponível 24/7</h4><p>Precisa agendar às 22h de um domingo? A IA está lá, funcionando normalmente.</p></div></div>
+    </div>
+    <div class="benefits-content" id="tab-recepcionistas">
+      <div class="benefit-item"><div class="icon">🎯</div><div><h4>Foco no presencial</h4><p>Com a IA cuidando do WhatsApp, a equipe pode dar atenção total aos pacientes na clínica.</p></div></div>
+      <div class="benefit-item"><div class="icon">📉</div><div><h4>Menos volume de mensagens</h4><p>Redução drástica das conversas repetitivas de agendamento que tomam o dia todo.</p></div></div>
+      <div class="benefit-item"><div class="icon">🤝</div><div><h4>Transferência com contexto</h4><p>Quando a IA transfere, a atendente recebe todo o histórico da conversa. Zero retrabalho.</p></div></div>
+      <div class="benefit-item"><div class="icon">😌</div><div><h4>Menos estresse</h4><p>Sem acúmulo de mensagens na segunda-feira, sem pressão de responder tudo ao mesmo tempo.</p></div></div>
+    </div>
+    <div class="benefits-content" id="tab-gestores">
+      <div class="benefit-item"><div class="icon">💰</div><div><h4>Redução de custo operacional</h4><p>Menos horas de equipe dedicadas a tarefas repetitivas. Cada real rende mais.</p></div></div>
+      <div class="benefit-item"><div class="icon">📈</div><div><h4>Mais agendamentos</h4><p>Pacientes que antes desistiam agora conseguem agendar a qualquer hora, aumentando a receita.</p></div></div>
+      <div class="benefit-item"><div class="icon">🏆</div><div><h4>Diferencial competitivo</h4><p>A ConSaúde se posiciona como a clínica mais inovadora e tecnológica de Belém.</p></div></div>
+      <div class="benefit-item"><div class="icon">📊</div><div><h4>Dados e visibilidade</h4><p>Todas as interações ficam registradas. Volume, horários de pico, demandas por especialidade.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics section">
+  <div class="container">
+    <div class="section-label">Indicadores de Ganho</div>
+    <h2 class="section-title">Resultados esperados</h2>
+    <p class="section-subtitle">Projeções baseadas no volume atual de ~3.500 atendimentos/mês da ConSaúde.</p>
+    <div class="metrics-grid">
+      <div class="metric-card fade-up"><div class="num">~90%</div><div class="label">Redução do tempo operacional de agendamentos via WhatsApp</div></div>
+      <div class="metric-card fade-up"><div class="num">&lt;30s</div><div class="label">Tempo médio de resposta ao paciente</div></div>
+      <div class="metric-card fade-up"><div class="num">24/7</div><div class="label">Atendimento ininterrupto, incluindo noites e finais de semana</div></div>
+      <div class="metric-card fade-up"><div class="num">∞</div><div class="label">Conversas simultâneas sem perda de qualidade</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATION -->
+<section class="integration section">
+  <div class="container" style="text-align:center">
+    <div class="section-label" style="justify-content:center">Integração</div>
+    <h2 class="section-title">Conectada ao ecossistema<br>da ConSaúde</h2>
+    <p class="section-subtitle" style="margin:0 auto">A IA não funciona isolada. Ela se conecta diretamente ao sistema que a clínica já utiliza.</p>
+    <div class="integration-visual">
+      <div class="integration-node"><div class="emoji">📱</div><div class="name">WhatsApp</div><div class="desc">Canal de entrada</div></div>
+      <div class="integration-arrow">→</div>
+      <div class="integration-node integration-center"><div class="emoji">🤖</div><div class="name">Assistente IA</div><div class="desc">Motor inteligente</div></div>
+      <div class="integration-arrow">→</div>
+      <div class="integration-node"><div class="emoji">🏥</div><div class="name">AmigoApp</div><div class="desc">Sistema da clínica</div></div>
+    </div>
+    <div class="integration-visual" style="margin-top:1.5rem">
+      <div class="integration-node"><div class="emoji">📅</div><div class="name">Agenda médica</div><div class="desc">Horários em tempo real</div></div>
+      <div class="integration-node"><div class="emoji">🗂️</div><div class="name">Cadastro de pacientes</div><div class="desc">Base unificada</div></div>
+      <div class="integration-node"><div class="emoji">💳</div><div class="name">Convênios</div><div class="desc">Validação automática</div></div>
+      <div class="integration-node"><div class="emoji">🧑‍💼</div><div class="name">Atendente humana</div><div class="desc">Escalação quando necessário</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="roi section">
+  <div class="container">
+    <div class="section-label">Retorno do Investimento</div>
+    <h2 class="section-title">O custo de não ter a IA</h2>
+    <p class="section-subtitle">Comparativo mensal estimado entre manter o processo atual e adotar o Assistente IA.</p>
+    <div class="roi-table">
+      <table>
+        <thead><tr><th>Indicador</th><th>Processo Atual</th><th>Com Assistente IA</th></tr></thead>
+        <tbody>
+          <tr><td>Tempo médio por agendamento</td><td>5 a 15 minutos</td><td class="highlight-val">&lt; 30 segundos</td></tr>
+          <tr><td>Atendimentos fora do horário comercial</td><td>Nenhum</td><td class="highlight-val">24/7 automático</td></tr>
+          <tr><td>Paciente repete informações?</td><td>Sim, sempre</td><td class="highlight-val">Nunca</td></tr>
+          <tr><td>Conversas simultâneas</td><td>Limitado à equipe</td><td class="highlight-val">Ilimitadas</td></tr>
+          <tr><td>Custo incremental por atendimento</td><td>Cresce com volume</td><td class="highlight-val">Fixo</td></tr>
+          <tr><td>Agendamentos perdidos fora do horário</td><td>Estimativa: 15-20%</td><td class="highlight-val">~0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing section" id="investimento">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label" style="justify-content:center">Investimento</div>
+      <h2 class="section-title">Plano Comercial</h2>
+      <p class="section-subtitle" style="margin:0 auto">Investimento acessível com retorno operacional imediato.</p>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h3>Assistente IA ConSaúde</h3>
+        <p>Solução completa de atendimento inteligente</p>
+      </div>
+      <div class="pricing-body">
+        <div class="pricing-row">
+          <div class="label">Implantação<small>Setup, integração com sistema, configuração do agente, treinamento</small></div>
+          <div class="value">R$ 5.000<small> único</small></div>
+        </div>
+        <div class="pricing-row">
+          <div class="label">Mensalidade<small>Manutenção, atualizações, suporte técnico, monitoramento</small></div>
+          <div class="value">R$ 250<small>/mês</small></div>
+        </div>
+        <div class="pricing-row">
+          <div class="label">Prazo de implantação<small>Da assinatura ao sistema operando em produção</small></div>
+          <div class="value" style="font-size:1.2rem">7 dias</div>
+        </div>
+      </div>
+      <div class="pricing-footer">
+        <a href="https://wa.me/5591984290004" class="pricing-cta">Quero Contratar o Assistente IA →</a>
+        <p class="pricing-note">Sem fidelidade. Sem taxa de cancelamento. Suporte incluso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>A ConSaúde já é referência<br>em saúde no Pará.</h2>
+  <p>Agora é hora de ser referência também em experiência do paciente. O Assistente IA está pronto para transformar cada conversa em um atendimento memorável.</p>
+  <a href="https://wa.me/5591984290004" class="cta-btn">💬 Falar com a Kyrios AI →</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand"><span class="dot"></span> Assistente IA ConSaúde</div>
+  <p>Proposta comercial exclusiva para a Clínica ConSaúde<br>Belém — Pará, Junho 2026</p>
+  <div class="divider"></div>
+  <p class="footer-by">Desenvolvido por <strong style="color:var(--green-400)">Kyrios AI Solutions</strong></p>
+</footer>
+
+<script>
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>50)});
+
+// Fade up observer
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})
+},{threshold:0.15});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+
+// Benefits tabs
+document.querySelectorAll('.benefits-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.benefits-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.benefits-content').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
